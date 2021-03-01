@@ -4,6 +4,7 @@ import morgan from "morgan"; //morgan = logging에 도움을 주는 middleware
 import helmet from "helmet"; //helmet = 기초보안담당
 import bodyParser from "body-parser"; //form데이터를 서버로 받아와서 활용가능함.
 import passport from "passport"; // 로그인 인증
+import mongoose from "mongoose";
 import session from "express-session"; //
 import cookieParser from "cookie-parser"; //쿠키를 다룰 수 있음
 import { localsMiddleware } from "./middlewareds";
@@ -15,9 +16,9 @@ import routes from "./routes";
 import "./passport";
 
 const app = express();
-/*function handleHome(req, res){
-    res.send("Hello from home");
-}*/
+
+const MongoStore = require("connect-mongo").default;
+
 app.set("view engine", "pug");
 app.use("/uploads", express.static("uploads")); //주어진 directory에서 file을 전달하는 새로운 middleware fuction
 app.use("/static", express.static("static"));
@@ -33,6 +34,7 @@ app.use(
     secret: process.env.COOKIE_SECRET,
     resave: true,
     saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URL }),
   })
 );
 app.use(morgan("dev")); //middleware
